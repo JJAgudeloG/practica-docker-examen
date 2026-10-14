@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Parcial</title>
+</head>
+<body>
+  <h1>Parcial Juan Jose Agudelo</h1>
+  <input type="text" id="nombre" placeholder="Nombre Producto"><br><br>
+  <input type="text" id="categoria" placeholder="Categoria"><br><br>
+  <input type="number" id="precio" placeholder="Precio"><br><br>
+  <button onclick="guardar()">Guardar</button>
+  <p id="mensaje"></p>
+  <ul id="lista"></ul>
+
+  <script>
+    async function guardar() {
+      const datos = {
+        nombre: document.getElementById('nombre').value,
+        categoria: document.getElementById('categoria').value,
+        precio: document.getElementById('precio').value
+      };
+      const r = await fetch('/api/productos', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(datos)
+      });
+      document.getElementById('mensaje').innerText =
+        r.ok ? 'Producto guardado' : 'Error al guardar';
+      cargar();
+    }
+    async function cargar() {
+      const r = await fetch('/api/productos');
+      const productos = await r.json();
+      document.getElementById('lista').innerHTML = productos
+        .map(p => `<li>${p.nombre} - ${p.categoria} - $${p.precio}</li>`).join('');
+    }
+    cargar();
+  </script>
+</body>
+</html>
